@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+  <h1>Crear Usuario</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+          <span class="text-danger">×</span>
+          <div class="text-danger">{{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success">Crear usuario</button>
+  </form>
+{% endblock %}

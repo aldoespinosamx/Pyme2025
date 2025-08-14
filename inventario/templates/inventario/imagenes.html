@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load cloudinary %}
+{% block title %}Imágenes de producto{% endblock %}
+{% block content %}
+<h1>Imágenes: {{ object }}</h1>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ formset.management_form }}
+  <div class="row">
+    {% for form in formset %}
+      <div class="col-md-6 mb-3">
+        <div class="card p-3">
+          {% for f in form.visible_fields %}
+            <div class="mb-2">
+              <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>
+              {{ f }}
+              {% if f.errors %}<div class="text-danger">× {{ f.errors|join:", " }}</div>{% endif %}
+            </div>
+          {% endfor %}
+
+          {% if form.instance.imagen %}
+            <div class="mt-2">
+              {# Entrega optimizada: formato y calidad automáticos, responsive #}
+              {% cloudinary form.instance.imagen.name width=640 crop="limit" fetch_format="auto" quality="auto" dpr="auto" alt="imagen" class="img-fluid" %}
+            </div>
+          {% endif %}
+
+          {% if form.can_delete %}
+            <div class="form-check mt-2">
+              {{ form.DELETE }} <label class="form-check-label">Eliminar</label>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <button class="btn btn-success">Guardar imágenes</button>
+  <a class="btn btn-link" href="{% url 'inventario:editar' object.internal_id %}">Volver</a>
+</form>
+{% endblock %}

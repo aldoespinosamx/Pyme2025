@@ -1,0 +1,91 @@
+{# C:\Users\acant\Documents\XPYME\inventario\templates\inventario\seleccion.html #}
+
+{% extends "base.html" %}
+
+{% block title %}Inventario - Selección{% endblock %}
+
+{% block content %}
+
+<h1>Inventario</h1>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Nuevo producto (escaneo)</h5>
+        <p class="card-text">Escanea el identificador del producto para buscar o crear un registro.</p>
+        <a class="btn btn-primary" href="#scanner" onclick="document.getElementById('scanSection').scrollIntoView()">Abrir cámara</a>
+        <a class="btn btn-outline-secondary" href="{% url 'inventario:nuevo' %}">Crear manualmente</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Buscar producto</h5>
+        <form action="{% url 'inventario:buscar' %}" method="get" class="d-flex">
+          <input type="text" name="q" class="form-control" placeholder="ID, SKU, identificador, nombre, palabras clave">
+          <button class="btn btn-secondary ms-2">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<div id="scanSection">
+  <h4>Escaneo con cámara</h4>
+  <div class="alert alert-info">Permite la cámara. Apunta al identificador; al detectar, te llevaremos al resultado.</div>
+  <div id="video-container" class="mb-2" style="max-width:480px;">
+    <video id="video" width="100%" height="240" autoplay muted playsinline></video>
+    <canvas id="canvas" class="d-none"></canvas>
+  </div>
+  <button class="btn btn-outline-primary" id="startScan">Iniciar escaneo</button>
+  <button class="btn btn-outline-danger" id="stopScan" disabled>Detener</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@2.0.2/dist/quagga.min.js"></script>
+<script>
+  const startBtn = document.getElementById('startScan');
+  const stopBtn = document.getElementById('stopScan');
+
+  function onDetected(result) {
+    const code = result.codeResult.code;
+    if (code) {
+      Quagga.stop();
+      window.location.href = "{% url 'inventario:scan_result' %}" + "?code=" + encodeURIComponent(code);
+    }
+  }
+
+  startBtn.addEventListener('click', () => {
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    Quagga.init({
+      inputStream: {
+        type: "LiveStream",
+        target: document.querySelector('#video-container'),
+        constraints: { facingMode: "environment" }
+      },
+      decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader", "upc_reader", "upc_e_reader"] }
+    }, (err) => {
+      if (err) {
+        alert("Error iniciando cámara: " + err);
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        return;
+      }
+      Quagga.start();
+      Quagga.onDetected(onDetected);
+    });
+  });
+
+  stopBtn.addEventListener('click', () => {
+    Quagga.stop();
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  });
+</script>
+
+{% endblock %}

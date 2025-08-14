@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Ajuste de stock{% endblock %}
+{% block content %}
+<h1>Ajuste de stock: {{ producto }}</h1>
+<p>Stock actual: <strong>{{ producto.stock_actual }}</strong></p>
+<form method="post" class="row g-3">
+  {% csrf_token %}
+  <div class="col-md-4">
+    <label class="form-label">Acción</label>
+    {{ form.accion }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Cantidad</label>
+    {{ form.cantidad }}
+  </div>
+  <div class="col-md-8">
+    <label class="form-label">Motivo (opcional)</label>
+    {{ form.motivo }}
+  </div>
+  <div class="col-12">
+    <button class="btn btn-success">Aplicar</button>
+    <a class="btn btn-link" href="{% url 'inventario:editar' producto.internal_id %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

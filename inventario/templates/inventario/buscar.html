@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Buscar Productos{% endblock %}
+{% block content %}
+<h1>Buscar Productos</h1>
+<form class="d-flex mb-3" method="get">
+  <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="SKU, nombre, código, palabras">
+  <button class="btn btn-primary ms-2">Buscar</button>
+  <a class="btn btn-outline-secondary ms-2" href="{% url 'inventario:seleccion' %}">Volver</a>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>SKU</th><th>Nombre</th><th>Estado</th><th>Stock</th><th>Ubicación</th><th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in productos %}
+      <tr>
+        <td>{{ p.sku }}</td>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.estado }}</td>
+        <td>{{ p.stock_actual }}</td>
+        <td>{{ p.ubicacion_principal }}</td>
+        <td>
+          <a class="btn btn-sm btn-secondary" href="{% url 'inventario:editar' p.internal_id %}">Editar</a>
+          <a class="btn btn-sm btn-outline-dark" href="{% url 'inventario:ajuste' p.internal_id %}">Ajuste stock</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">Sin resultados.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

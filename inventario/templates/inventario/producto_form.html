@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Producto{% endblock %}
+
+{% block content %}
+<h1>{{ object|default_if_none:"Nuevo producto" }}</h1>
+
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <div class="row">
+    {% for field in form %}
+      <div class="col-md-6 mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+        {% if field.errors %}
+          <div class="text-danger">× {{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  <button type="submit" class="btn btn-success">Guardar</button>
+  {% if object %}
+    <a class="btn btn-outline-secondary" href="{% url 'inventario:imagenes' object.internal_id %}">Imágenes</a>
+    <a class="btn btn-outline-dark" href="{% url 'inventario:ajuste' object.internal_id %}">Ajuste de stock</a>
+  {% endif %}
+  <a class="btn btn-link" href="{% url 'inventario:seleccion' %}">Cancelar</a>
+</form>
+{% endblock %}

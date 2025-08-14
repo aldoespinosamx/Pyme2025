@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Crear usuario{% endblock %}
+
+{% block content %}
+  <h1>Crear usuario</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {# Aquí form.as_p genera un <p> por cada campo #}
+    <div class="form-fields">
+      {{ form.as_p }}
+    </div>
+
+    <button type="submit">Crear usuario</button>
+  </form>
+{% endblock %}

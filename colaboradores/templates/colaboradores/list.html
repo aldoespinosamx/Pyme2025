@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Directorio de Colaboradores</h2>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre de usuario</th>
+        <th>Rol</th>
+        <th>Teléfono</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in colaboradores %}
+        <tr>
+          <td>
+            <a href="{% url 'colaboradores:editar' c.pk %}">
+              {{ c.username }}
+            </a>
+          </td>
+          <td>{{ c.role_obj.name }}</td>
+          <td>{{ c.phone }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No hay colaboradores registrados.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
